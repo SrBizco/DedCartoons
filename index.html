@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <title>Ded Cartoons</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main>
+      <header class="title-menu">
+        <img src="./public/assets/TITULO.png" alt="Ded Cartoons. DedNews, Videos, Música, Art y DedTunes Vol. 1." />
+      </header>
+
+      <section class="character-menu" aria-label="Personajes de Ded Cartoons">
+        <img class="menu-art" src="./public/assets/MENU-1.png" alt="Keladd y Dander" />
+        <video id="character-preview" class="character-preview" muted playsinline preload="metadata" hidden></video>
+        <div class="menu-actions" aria-label="Personajes animados">
+          <button class="character-hitbox keladd" type="button" data-character="keladd" aria-label="Keladd"></button>
+          <button class="character-hitbox dander" type="button" data-character="dander" aria-label="Dander"></button>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

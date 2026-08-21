@@ -1,0 +1,9 @@
+{
+  "name": "ded-cartoons",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/server.mjs",
+    "test": "node --test"
+  }
+}

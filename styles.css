@@ -1,0 +1,72 @@
+:root {
+  color-scheme: dark;
+  background: #000;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  min-width: 320px;
+  margin: 0;
+  background: #000;
+}
+
+button { font: inherit; }
+
+.title-menu,
+.character-menu {
+  position: relative;
+  margin-inline: auto;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+
+.title-menu { width: min(100%, 900px); }
+.character-menu { width: min(100%, 1150px); }
+
+.title-menu img,
+.menu-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.menu-art { user-select: none; }
+
+.character-preview {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.character-preview[hidden] { display: none; }
+
+.menu-actions {
+  position: absolute;
+  inset: 0;
+}
+
+.character-hitbox {
+  position: absolute;
+  top: 17%;
+  width: 30%;
+  height: 75%;
+  border: 0;
+  border-radius: 43%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.keladd { left: 18%; }
+.dander { right: 18%; }
+
+@media (max-width: 640px) {
+  .character-hitbox { top: 20%; width: 32%; height: 67%; }
+  .keladd { left: 17%; }
+  .dander { right: 17%; }
+}
