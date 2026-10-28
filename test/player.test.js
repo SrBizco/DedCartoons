@@ -46,12 +46,15 @@ test('the WebGL wrapper uses a lower, letterboxed render target on mobile only',
   assert.match(generatedRoom, /\.unity-mobile #unity-canvas \{ width: 100%; height: auto; aspect-ratio: 16 \/ 9;/);
 });
 
-test('GitHub Pages deployment includes Unity decompression fallback and publishes the public folder', async () => {
+test('GitHub Pages deployment includes Unity decompression fallback and publishes the complete site', async () => {
   const projectSettings = await readFile(new URL('../DedCartoonsRoom/ProjectSettings/ProjectSettings.asset', siteRoot), 'utf8');
   const workflow = await readFile(new URL('.github/workflows/deploy-pages.yml', siteRoot), 'utf8');
 
   assert.match(projectSettings, /webGLDecompressionFallback: 1/);
-  assert.match(workflow, /path:\s*\.\/public/);
+  assert.match(workflow, /mkdir _site/);
+  assert.match(workflow, /cp index\.html styles\.css app\.js _site\//);
+  assert.match(workflow, /cp -R public _site\/public/);
+  assert.match(workflow, /path:\s*\.\/_site/);
   assert.match(workflow, /actions\/deploy-pages/);
 });
 
