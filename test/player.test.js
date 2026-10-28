@@ -33,6 +33,19 @@ test('WebGL keeps the same 16:9 render resolution used by the standalone build',
   assert.match(projectSettings, /defaultScreenHeightWeb: 1080/);
 });
 
+test('the WebGL wrapper uses a lower, letterboxed render target on mobile only', async () => {
+  const buildScript = await readFile(new URL('../DedCartoonsRoom/Assets/Editor/BuildWebGL.cs', siteRoot), 'utf8');
+  const generatedRoom = await readFile(new URL('public/room/index.html', siteRoot), 'utf8');
+
+  assert.match(buildScript, /const string deviceModeMarker = "const dedIsMobile"/);
+  assert.match(buildScript, /config\.devicePixelRatio = 1/);
+  assert.match(buildScript, /\.unity-mobile #unity-canvas/);
+  assert.match(generatedRoom, /const dedIsMobile = \/iPhone\|iPad\|iPod\|Android\/i\.test\(navigator\.userAgent\)/);
+  assert.match(generatedRoom, /if \(!dedIsMobile\)\s*\{\s*config\.matchWebGLToCanvasSize = false;/);
+  assert.match(generatedRoom, /if \(dedIsMobile\)\s*\{[\s\S]*?config\.devicePixelRatio = 1;/);
+  assert.match(generatedRoom, /\.unity-mobile #unity-canvas \{ width: 100%; height: auto; aspect-ratio: 16 \/ 9;/);
+});
+
 test('GitHub Pages deployment includes Unity decompression fallback and publishes the public folder', async () => {
   const projectSettings = await readFile(new URL('../DedCartoonsRoom/ProjectSettings/ProjectSettings.asset', siteRoot), 'utf8');
   const workflow = await readFile(new URL('.github/workflows/deploy-pages.yml', siteRoot), 'utf8');
