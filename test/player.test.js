@@ -15,10 +15,13 @@ test('the landing page contains only the room entry and its ENTER artwork', asyn
 test('the room embed keeps Unity centered while hiding its standalone footer', async () => {
   const styles = await readFile(new URL('styles.css', siteRoot), 'utf8');
   const buildScript = await readFile(new URL('../DedCartoonsRoom/Assets/Editor/BuildWebGL.cs', siteRoot), 'utf8');
+  const generatedRoom = await readFile(new URL('public/room/index.html', siteRoot), 'utf8');
 
   assert.match(styles, /\.room-frame[\s\S]*?border:\s*0;/);
   assert.match(buildScript, /#unity-footer \{\{ display: none; \}\}/);
   assert.match(buildScript, /background:\s*#000/);
+  assert.match(buildScript, /#unity-canvas \{\{ background: #000; \}\}/);
+  assert.match(generatedRoom, /#unity-canvas \{ background: #000; \}/);
   assert.match(buildScript, /transform: translate\(-50%, -50%\) scale\(1\.35\)/);
   assert.match(buildScript, /config\.matchWebGLToCanvasSize = false/);
   assert.match(buildScript, /canvas\.style\.width = ""960px""/);
@@ -51,6 +54,7 @@ test('GitHub Pages deployment includes Unity decompression fallback and publishe
   const workflow = await readFile(new URL('.github/workflows/deploy-pages.yml', siteRoot), 'utf8');
 
   assert.match(projectSettings, /webGLDecompressionFallback: 1/);
+  assert.match(projectSettings, /webGLCompressionFormat: 0/);
   assert.match(workflow, /mkdir _site/);
   assert.match(workflow, /cp index\.html styles\.css app\.js _site\//);
   assert.match(workflow, /cp -R public _site\/public/);
