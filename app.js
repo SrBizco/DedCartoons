@@ -1,40 +1,21 @@
 (() => {
-  const characters = {
-    keladd: './public/assets/Keladd-Selec.mp4',
-    dander: './public/assets/Dander-Selec.mp4',
+  const roomFrame = document.querySelector('#room-frame');
+  const entryGate = document.querySelector('#room-entry-gate');
+
+  const enterRoom = () => {
+    if (!roomFrame || !entryGate || entryGate.hidden) return;
+
+    roomFrame.contentWindow?.postMessage('ded-cartoons-enter', window.location.origin);
+    entryGate.hidden = true;
+    roomFrame.focus();
   };
 
-  const video = document.querySelector('#character-preview');
-  const buttons = document.querySelectorAll('[data-character]');
-  let activeCharacter = null;
-
-  const play = (characterKey) => {
-    const source = characters[characterKey];
-    if (!source || activeCharacter === characterKey) return;
-
-    activeCharacter = characterKey;
-    video.hidden = false;
-    video.src = source;
-    video.load();
-    video.play().catch(() => {});
-  };
-
-  const stop = () => {
-    if (!activeCharacter) return;
-
-    video.pause();
-    video.removeAttribute('src');
-    video.load();
-    video.hidden = true;
-    activeCharacter = null;
-  };
-
-  buttons.forEach((button) => {
-    const characterKey = button.dataset.character;
-    button.addEventListener('pointerenter', () => play(characterKey));
-    button.addEventListener('pointerleave', stop);
-    button.addEventListener('focus', () => play(characterKey));
-    button.addEventListener('blur', stop);
-    button.addEventListener('click', () => play(characterKey));
+  window.addEventListener('keydown', (event) => {
+    if (event.code === 'Enter') {
+      event.preventDefault();
+      enterRoom();
+    }
   });
+
+  entryGate?.addEventListener('click', enterRoom);
 })();

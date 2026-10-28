@@ -6,67 +6,52 @@
 * { box-sizing: border-box; }
 
 body {
-  min-width: 320px;
   margin: 0;
   background: #000;
 }
 
-button { font: inherit; }
+main,
+.room-experience {
+  display: grid;
+  min-height: 100dvh;
+}
 
-.title-menu,
-.character-menu {
-  position: relative;
-  margin-inline: auto;
+.room-experience {
+  width: min(100%, 1440px);
+  margin: auto;
+  padding: 0;
+}
+
+.room-frame {
+  display: block;
+  width: 100%;
   aspect-ratio: 16 / 9;
+  border: 0;
   background: #000;
 }
 
-.title-menu { width: min(100%, 900px); }
-.character-menu { width: min(100%, 1150px); }
-
-.title-menu img,
-.menu-art {
-  display: block;
+.room-shell {
+  position: relative;
   width: 100%;
-  height: 100%;
-  object-fit: contain;
 }
 
-.menu-art { user-select: none; }
-
-.character-preview {
+.room-entry-gate {
   position: absolute;
   inset: 0;
-  display: block;
+  display: grid;
+  place-items: center;
   width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none;
-}
-
-.character-preview[hidden] { display: none; }
-
-.menu-actions {
-  position: absolute;
-  inset: 0;
-}
-
-.character-hitbox {
-  position: absolute;
-  top: 17%;
-  width: 30%;
-  height: 75%;
+  padding: 0;
+  overflow: hidden;
   border: 0;
-  border-radius: 43%;
-  background: transparent;
+  background: #000;
   cursor: pointer;
 }
 
-.keladd { left: 18%; }
-.dander { right: 18%; }
-
-@media (max-width: 640px) {
-  .character-hitbox { top: 20%; width: 32%; height: 67%; }
-  .keladd { left: 17%; }
-  .dander { right: 17%; }
+.room-entry-gate video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
+
+.room-entry-gate[hidden] { display: none; }

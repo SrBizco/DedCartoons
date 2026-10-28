@@ -1,82 +1,56 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { createCharacterPlayer } from '../src/player.js';
 
-function eventTarget() {
-  const listeners = new Map();
-  return {
-    addEventListener(type, listener) {
-      listeners.set(type, listener);
-    },
-    removeEventListener(type) {
-      listeners.delete(type);
-    },
-    emit(type, event = {}) {
-      listeners.get(type)?.({ currentTarget: this, ...event });
-    },
-  };
-}
+const siteRoot = new URL('../', import.meta.url);
 
-test('plays a character clip while its hotspot is hovered and restores the static menu on exit', () => {
-  const video = {
-    ...eventTarget(),
-    src: '',
-    paused: true,
-    loadCalled: 0,
-    playCalled: 0,
-    pauseCalled: 0,
-    load() { this.loadCalled += 1; },
-    play() { this.playCalled += 1; return Promise.resolve(); },
-    pause() { this.pauseCalled += 1; },
-    removeAttribute(name) { if (name === 'src') this.src = ''; },
-  };
-  const trigger = { dataset: { character: 'keladd' }, ...eventTarget() };
+test('the landing page contains only the room entry and its ENTER artwork', async () => {
+  const index = await readFile(new URL('index.html', siteRoot), 'utf8');
 
-  const player = createCharacterPlayer({
-    video,
-    triggerButtons: new Set([trigger]),
-  });
-
-  trigger.emit('pointerenter');
-  assert.equal(video.hidden, false);
-  assert.equal(video.src, './public/assets/Keladd-Selec.mp4');
-  assert.equal(video.playCalled, 1);
-
-  trigger.emit('pointerleave');
-  assert.equal(video.hidden, true);
-  assert.equal(video.pauseCalled, 1);
-  assert.equal(video.src, '');
-
-  player.destroy();
+  assert.match(index, /id="room-entry-gate"/);
+  assert.match(index, /Enter-input\.mp4/);
+  assert.doesNotMatch(index, /title-menu|character-menu|<h2[^>]*>La habitación<\/h2>/);
 });
 
-test('plays a character clip when its hotspot is clicked', () => {
-  const video = {
-    ...eventTarget(),
-    src: '',
-    hidden: true,
-    load() {},
-    playCalled: 0,
-    play() { this.playCalled += 1; return Promise.resolve(); },
-  };
-  const trigger = { dataset: { character: 'dander' }, ...eventTarget() };
+test('the room embed keeps Unity centered while hiding its standalone footer', async () => {
+  const styles = await readFile(new URL('styles.css', siteRoot), 'utf8');
+  const buildScript = await readFile(new URL('../DedCartoonsRoom/Assets/Editor/BuildWebGL.cs', siteRoot), 'utf8');
 
-  createCharacterPlayer({ video, triggerButtons: new Set([trigger]) });
-  trigger.emit('click');
-
-  assert.equal(video.hidden, false);
-  assert.equal(video.src, './public/assets/Dander-Selec.mp4');
-  assert.equal(video.playCalled, 1);
+  assert.match(styles, /\.room-frame[\s\S]*?border:\s*0;/);
+  assert.match(buildScript, /#unity-footer \{\{ display: none; \}\}/);
+  assert.match(buildScript, /background:\s*#000/);
+  assert.match(buildScript, /transform: translate\(-50%, -50%\) scale\(1\.35\)/);
+  assert.match(buildScript, /config\.matchWebGLToCanvasSize = false/);
+  assert.match(buildScript, /canvas\.style\.width = ""960px""/);
+  assert.match(buildScript, /canvas\.style\.height = ""540px""/);
+  assert.doesNotMatch(buildScript, /#unity-container, #unity-container\.unity-desktop/);
 });
 
-test('keeps the preview video out of the page until a character activates it', async () => {
-  const styles = await readFile(new URL('../styles.css', import.meta.url), 'utf8');
-  assert.match(styles, /\.character-preview\[hidden\]\s*\{\s*display:\s*none;/);
+test('WebGL keeps the same 16:9 render resolution used by the standalone build', async () => {
+  const projectSettings = await readFile(new URL('../DedCartoonsRoom/ProjectSettings/ProjectSettings.asset', siteRoot), 'utf8');
+
+  assert.match(projectSettings, /defaultScreenWidthWeb: 1920/);
+  assert.match(projectSettings, /defaultScreenHeightWeb: 1080/);
 });
 
-test('loads a classic script so index.html can run from the local file system', async () => {
-  const index = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+test('GitHub Pages deployment includes Unity decompression fallback and publishes the public folder', async () => {
+  const projectSettings = await readFile(new URL('../DedCartoonsRoom/ProjectSettings/ProjectSettings.asset', siteRoot), 'utf8');
+  const workflow = await readFile(new URL('.github/workflows/deploy-pages.yml', siteRoot), 'utf8');
+
+  assert.match(projectSettings, /webGLDecompressionFallback: 1/);
+  assert.match(workflow, /path:\s*\.\/public/);
+  assert.match(workflow, /actions\/deploy-pages/);
+});
+
+test('the navigator preloads audio sources, including those under inactive screens', async () => {
+  const navigator = await readFile(new URL('../DedCartoonsRoom/Assets/Scripts/ScreenNavigator.cs', siteRoot), 'utf8');
+
+  assert.match(navigator, /FindObjectsByType<AudioSource>\(FindObjectsInactive\.Include/);
+  assert.match(navigator, /clip\.LoadAudioData\(\)/);
+});
+
+test('the page keeps a classic script tag for the local development server', async () => {
+  const index = await readFile(new URL('index.html', siteRoot), 'utf8');
   assert.match(index, /<script src="\.\/app\.js"><\/script>/);
   assert.doesNotMatch(index, /type="module"/);
 });

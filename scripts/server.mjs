@@ -8,6 +8,8 @@ const mimeTypes = {
   '.css': 'text/css',
   '.html': 'text/html',
   '.js': 'text/javascript',
+  '.wasm': 'application/wasm',
+  '.json': 'application/json',
   '.mp4': 'video/mp4',
   '.png': 'image/png',
 };
@@ -23,9 +25,17 @@ createServer((request, response) => {
     return;
   }
 
-  response.writeHead(200, {
-    'Content-Type': mimeTypes[extname(filePath)] ?? 'application/octet-stream',
-  });
+  const isBrotliCompressed = extname(filePath) === '.br';
+  const uncompressedPath = isBrotliCompressed ? filePath.slice(0, -3) : filePath;
+  const headers = {
+    'Content-Type': mimeTypes[extname(uncompressedPath)] ?? 'application/octet-stream',
+  };
+
+  if (isBrotliCompressed) {
+    headers['Content-Encoding'] = 'br';
+  }
+
+  response.writeHead(200, headers);
   createReadStream(filePath).pipe(response);
 }).listen(port, () => {
   console.log(`Ded Cartoons disponible en http://localhost:${port}`);

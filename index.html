@@ -9,16 +9,20 @@
   </head>
   <body>
     <main>
-      <header class="title-menu">
-        <img src="./public/assets/TITULO.png" alt="Ded Cartoons. DedNews, Videos, Música, Art y DedTunes Vol. 1." />
-      </header>
-
-      <section class="character-menu" aria-label="Personajes de Ded Cartoons">
-        <img class="menu-art" src="./public/assets/MENU-1.png" alt="Keladd y Dander" />
-        <video id="character-preview" class="character-preview" muted playsinline preload="metadata" hidden></video>
-        <div class="menu-actions" aria-label="Personajes animados">
-          <button class="character-hitbox keladd" type="button" data-character="keladd" aria-label="Keladd"></button>
-          <button class="character-hitbox dander" type="button" data-character="dander" aria-label="Dander"></button>
+      <section class="room-experience" aria-label="Ded Cartoons Room">
+        <div class="room-shell">
+          <iframe
+            id="room-frame"
+            class="room-frame"
+            src="./public/room/index.html"
+            title="Habitación interactiva de Ded Cartoons"
+            loading="lazy"
+            allow="autoplay; fullscreen"
+            allowfullscreen
+          ></iframe>
+          <button id="room-entry-gate" class="room-entry-gate" type="button" aria-label="Presioná Enter para entrar con sonido">
+            <video src="./public/assets/Enter-input.mp4" autoplay muted loop playsinline preload="auto"></video>
+          </button>
         </div>
       </section>
     </main>
