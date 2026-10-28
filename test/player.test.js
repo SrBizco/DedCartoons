@@ -74,3 +74,9 @@ test('the page keeps a classic script tag for the local development server', asy
   assert.match(index, /<script src="\.\/app\.js"><\/script>/);
   assert.doesNotMatch(index, /type="module"/);
 });
+
+test('Cloudflare Pages has a dedicated publish build', async () => {
+  const packageJson = await readFile(new URL('package.json', siteRoot), 'utf8');
+
+  assert.match(packageJson, /"build:cloudflare": "node scripts\/build-cloudflare\.mjs"/);
+});
