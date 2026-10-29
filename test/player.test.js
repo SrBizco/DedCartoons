@@ -23,11 +23,18 @@ test('the room embed keeps Unity centered while hiding its standalone footer', a
   assert.match(buildScript, /background:\s*#000/);
   assert.match(buildScript, /#unity-canvas \{\{ background: #000; \}\}/);
   assert.match(generatedRoom, /#unity-canvas \{ background: #000; \}/);
-  assert.match(buildScript, /transform: translate\(-50%, -50%\) scale\(1\.35\)/);
+  assert.match(buildScript, /transform: translate\(-50%, -50%\);/);
   assert.match(buildScript, /config\.matchWebGLToCanvasSize = false/);
-  assert.match(buildScript, /canvas\.style\.width = ""960px""/);
-  assert.match(buildScript, /canvas\.style\.height = ""540px""/);
+  assert.match(buildScript, /canvas\.style\.width = ""100vw""/);
+  assert.match(buildScript, /canvas\.style\.height = ""56\.25vw""/);
   assert.doesNotMatch(buildScript, /#unity-container, #unity-container\.unity-desktop/);
+});
+
+test('the room player is vertically centered instead of leaving its unused space below', async () => {
+  const styles = await readFile(new URL('styles.css', siteRoot), 'utf8');
+
+  assert.match(styles, /main\s*\{[\s\S]*?place-items:\s*center;/);
+  assert.match(styles, /\.room-experience\s*\{[\s\S]*?min-height:\s*0;/);
 });
 
 test('WebGL keeps the same 16:9 render resolution used by the standalone build', async () => {

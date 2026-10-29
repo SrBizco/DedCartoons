@@ -10,15 +10,16 @@ body {
   background: #000;
 }
 
-main,
-.room-experience {
+main {
   display: grid;
   min-height: 100dvh;
+  place-items: center;
 }
 
 .room-experience {
+  min-height: 0;
   width: min(100%, calc(100dvh * 16 / 9));
-  margin: auto;
+  margin: 0;
   padding: 0;
 }
 
