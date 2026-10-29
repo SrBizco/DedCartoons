@@ -18,6 +18,7 @@ test('the room embed keeps Unity centered while hiding its standalone footer', a
   const generatedRoom = await readFile(new URL('public/room/index.html', siteRoot), 'utf8');
 
   assert.match(styles, /\.room-frame[\s\S]*?border:\s*0;/);
+  assert.match(styles, /\.room-experience[\s\S]*?width:\s*min\(100%, calc\(100dvh \* 16 \/ 9\)\);/);
   assert.match(buildScript, /#unity-footer \{\{ display: none; \}\}/);
   assert.match(buildScript, /background:\s*#000/);
   assert.match(buildScript, /#unity-canvas \{\{ background: #000; \}\}/);
